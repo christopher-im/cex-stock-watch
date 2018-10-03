@@ -45,6 +45,10 @@ def check_stock():
 
     if config['general']['persist'] or args.persist:
         email_trigger = check_persist(in_stock, out_of_stock)
+        with open('items.dat', 'wb+') as persist_file:
+            persist_dict = {item_name:True for item_name in in_stock}
+            persist_dict.update({item_name:False for item_name in out_of_stock})
+            persist_file.write(pickle.dumps(persist_dict))
     else:
         email_trigger = True
     if config['general']['send_email_enabled'] and email_trigger:
@@ -62,14 +66,7 @@ def check_persist(in_stock, out_of_stock):
                         return True
             elif in_stock:
                 return True
-            persist_dict = {item_name:True for item_name in in_stock}
-            persist_dict.update({item_name:False for item_name in out_of_stock})
-            persist_file.write(pickle.dumps(persist_dict))
     else:
-        with open('items.dat', 'wb+') as persist_file:
-            persist_dict = {item_name:True for item_name in in_stock}
-            persist_dict.update({item_name:False for item_name in out_of_stock})
-            persist_file.write(pickle.dumps(persist_dict))
         if in_stock:
             return True
     return False
