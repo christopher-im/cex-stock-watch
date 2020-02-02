@@ -86,12 +86,14 @@ def send_email(in_stock, out_of_stock):
 
     html_in_stock = ''
     for item in in_stock:
-        _, item_name = item
-        html_in_stock = html_in_stock + '<li>{0}</li>'.format(item_name)
+        item_id, item_name = item
+        item_link = '<a href="https://uk.webuy.com/product-detail/?id={item_id}">{item_name}</a>'.format(item_id=item_id, item_name=item_name)
+        html_in_stock = html_in_stock + '<li>{0}</li>'.format(item_link)
     html_out_of_stock = ''
     for item in out_of_stock:
-        _, item_name = item
-        html_out_of_stock = html_out_of_stock + '<li>{0}</li>'.format(item_name)
+        item_id, item_name = item
+        item_link = '<a href="https://uk.webuy.com/product-detail/?id={item_id}">{item_name}</a>'.format(item_id=item_id, item_name=item_name)
+        html_out_of_stock = html_out_of_stock + '<li>{0}</li>'.format(item_link)
 
     html = MIMEText(
         str.format(
@@ -107,7 +109,7 @@ def send_email(in_stock, out_of_stock):
     server.ehlo()
     server.starttls()
     server.ehlo()
-    server.login(config['general']['email_send_from'], config['general']['email_pass'])
+    server.login(config['general']['email_username'], config['general']['email_pass'])
     server.sendmail(config['general']['email_send_from'], config['general']['to_email'], msg.as_string())
     server.close()
     logger.info('Email sent to %s', config['general']['to_email'])
